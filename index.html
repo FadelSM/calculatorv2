@@ -3,522 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loker Foto Si fadli</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Calculator | Made By FadelSM</title>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #36454F; /* Charcoal Gray (darker gray) */
-            color: #f8bbd0; /* Light pink for contrast */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+        :root {
+            --bg-color: #0f0f1a;
+            --display-bg: rgba(15, 15, 26, 0.7);
+            --button-bg: rgba(30, 30, 50, 0.7);
+            --button-hover: rgba(60, 60, 90, 0.9);
+            --primary-glow: #6a00ff;
+            --secondary-glow: #00d4ff;
+            --text-color: #e0e0ff;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode {
+            --bg-color: #f0f0ff;
+            --display-bg: rgba(240, 240, 255, 0.7);
+            --button-bg: rgba(220, 220, 240, 0.7);
+            --button-hover: rgba(200, 200, 230, 0.9);
+            --primary-glow: #4a00e0;
+            --secondary-glow: #0095ff;
+            --text-color: #30305a;
+            --shadow: 0 8px 32px rgba(0, 0, 100, 0.1);
+            --border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        * {
             margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            min-height: 100vh; /* Ensure body takes full height */
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            transition: all 0.3s ease;
         }
 
-        .container {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Increased shadow for dark background */
-            padding: 30px;
-            margin-bottom: 30px;
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-            opacity: 0; /* Initially hidden for fade-in effect */
-            transform: translateY(20px); /* Slightly move down for slide-up effect */
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
-        .container.show {
-            opacity: 1;
+        .calculator {
+            width: 340px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            background: var(--display-bg);
+            box-shadow: var(--shadow);
+            border: var(--border);
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        .display {
+            padding: 20px;
+            text-align: right;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                var(--primary-glow),
+                transparent
+            );
+            opacity: 0.1;
+            animation: rotateGlow 8s linear infinite;
+        }
+
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .expression {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            min-height: 24px;
+            word-break: break-all;
+        }
+
+        .result {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            padding: 18px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            background: var(--button-bg);
+            color: var(--text-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+        }
+
+        button:active {
             transform: translateY(0);
         }
 
-        h1, h2 {
-            font-family: 'Dancing Script', cursive;
-            color: #ff80ab; /* Changed heading color for contrast with dark background */
-            margin-bottom: 20px;
+        button.operator {
+            background: rgba(100, 0, 200, 0.3);
+            color: var(--primary-glow);
         }
 
-        /* Login Section */
-        #login-section input[type="text"],
-        #login-section input[type="password"] {
-            width: calc(100% - 20px);
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #e91e63; /* Adjusted border color */
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s ease;
-            color: #333; /* Ensure input text is dark */
-            background-color: #fce4ec; /* Light pink input background */
+        button.operator:hover {
+            background: rgba(120, 0, 220, 0.4);
         }
 
-        #login-section input[type="text"]:focus,
-        #login-section input[type="password"]:focus {
-            border-color: #c2185b; /* Darker Deep Pink on focus */
-        }
-
-        #login-section button {
-            background-color: #e91e63; /* Deep Pink */
-            color: #fff;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        #login-section button:hover {
-            background-color: #c2185b; /* Darker Deep Pink */
-            transform: translateY(-2px);
-        }
-
-        #login-message {
-            color: #f44336; /* Red for error */
-            margin-top: 10px;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-
-        /* Photo Gallery Section */
-        #gallery-section {
-            display: none; /* Hidden by default, shown after login */
-        }
-
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-            justify-items: center;
-        }
-
-        .photo-item {
-            width: 150px;
-            height: 150px;
-            background-color: #f8bbd0; /* Lighter Pink - initial box color */
-            border: 2px solid #e91e63;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #880e4f; /* Dark Pink for "Klik Foto" text */
-            overflow: hidden;
-            position: relative;
-            cursor: pointer; /* Indicate it's clickable */
-            transition: background-color 0.3s ease; /* Smooth hover */
-        }
-
-        .photo-item:hover {
-            background-color: #ffdce9; /* Slightly lighter pink on hover */
-        }
-
-        .photo-item .click-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1; /* Ensure text is above hidden image */
-        }
-
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            position: absolute; /* Position image over the box */
-            top: 0;
-            left: 0;
-            opacity: 0; /* Hidden by default, will fade in */
-            transition: opacity 1s ease-in-out; /* Fade-in effect */
-            z-index: 0; /* Behind the text initially */
-        }
-
-        /* When image is shown (revealed class added by JS) */
-        .photo-item.revealed img {
-            opacity: 1; /* Make visible */
-        }
-
-        .photo-item.revealed .click-text {
-            display: none; /* Hide text after image is shown */
-        }
-
-        /* Fallback for image errors (if revealed and still no image) */
-        .photo-item.error::after {
-            content: "Foto Error";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffdddd;
-            color: #f44336;
-            font-size: 0.9em;
-            font-weight: bold;
-            border-radius: 8px;
-            opacity: 1; /* Always show error if applicable */
-            z-index: 2; /* Ensure error message is on top */
-            transition: none; /* No transition for error state */
-        }
-
-        /* Hide the image if it failed to load */
-        .photo-item.error img {
-            display: none;
-        }
-
-
-        .pagination {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px; /* Space between pagination and new button */
-        }
-
-        .pagination button {
-            background-color: #ff80ab; /* Medium Pink */
-            color: #fff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .pagination button:hover {
-            background-color: #e91e63; /* Deep Pink */
-            transform: translateY(-2px);
-        }
-
-        .pagination button.active {
-            background-color: #c2185b; /* Darker Deep Pink */
-            font-weight: bold;
-            transform: scale(1.05);
-        }
-
-        /* New button for video access */
-        #view-video-button {
-            background-color: #4CAF50; /* Green color for video button */
+        button.equals {
+            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
             color: white;
-            padding: 15px 30px;
+        }
+
+        button.equals:hover {
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        button.clear {
+            background: rgba(200, 0, 0, 0.3);
+            color: #ff6b6b;
+        }
+
+        button.clear:hover {
+            background: rgba(220, 0, 0, 0.4);
+        }
+
+        button.function {
+            color: var(--secondary-glow);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--button-bg);
             border: none;
-            border-radius: 10px;
-            font-size: 1.2em;
-            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            margin-top: 20px; /* Space from photos/pagination */
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            display: none; /* Hidden by default */
+            color: var(--text-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        #view-video-button:hover {
-            background-color: #45a049; /* Darker green on hover */
-            transform: translateY(-2px);
+        .theme-toggle:hover {
+            background: var(--button-hover);
         }
 
-
-        /* Video Section */
-        #video-section {
-            display: none; /* Hidden by default, shown when video button is clicked */
+        .zero {
+            grid-column: span 2;
         }
 
-        #video-player {
-            width: 100%;
-            max-width: 560px;
-            height: 315px; /* Standard 16:9 aspect ratio */
-            border-radius: 10px;
-            border: 3px solid #ff80ab; /* Changed border color for contrast */
-            margin-top: 20px;
-            background-color: #000; /* Black background for video */
-            outline: none; /* Remove focus outline */
-        }
-
-        .final-message {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5em;
-            color: #ff80ab; /* Changed color for contrast */
-            margin-top: 30px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5); /* Adjusted shadow for dark background */
-            animation: pulse 1.5s infinite alternate; /* Add a pulsating effect */
-        }
-
-        @keyframes pulse {
-            from {
-                transform: scale(1);
-            }
-            to {
-                transform: scale(1.05);
+        @media (max-width: 400px) {
+            .calculator {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
             }
         }
     </style>
 </head>
 <body>
-
-    <audio id="background-music" loop>
-        <source src="your_romantic_song.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung elemen audio.
-    </audio>
-
-    <div id="login-section" class="container show">
-        <h1>Tampilan awal<br>Loker Foto si fadli</h1>
-        <form id="login-form">
-            <label for="username">Nama:</label><br>
-            <input type="text" id="username" name="username" placeholder="Masukkan nama"><br><br>
-            <label for="password">Pass:</label><br>
-            <input type="password" id="password" name="password" placeholder="Masukkan password"><br><br>
-            <button type="submit">Login</button>
-            <p id="login-message"></p>
-        </form>
-    </div>
-
-    <div id="gallery-section" class="container">
-        <h2>Kumpulan Foto</h2>
-        <div id="photo-container" class="photo-grid">
-            </div>
-        <div class="pagination" id="pagination-controls">
-            </div>
-        <button id="view-video-button">Lihat Video Spesial</button>
-    </div>
-
-    <div id="video-section" class="container">
-        <h2>Video Diri Sendiri</h2>
-        <video id="video-player" controls>
-            <source src="your_special_video.mp4" type="video/mp4">
-            Browser Anda tidak mendukung elemen video.
-        </video>
-        <p class="final-message">HBD Kal!</p>
+    <div class="calculator">
+        <button class="theme-toggle" id="themeToggle">☀️</button>
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+        <div class="buttons">
+            <button class="clear" onclick="clearAll()">AC</button>
+            <button class="function" onclick="backspace()">⌫</button>
+            <button class="function" onclick="appendOperator('%')">%</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+            
+            <button class="function" onclick="appendFunction('sqrt(')">√</button>
+            <button class="function" onclick="appendFunction('^')">^</button>
+            <button class="function" onclick="appendFunction('π')">π</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+            
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="equals" onclick="calculate()">=</button>
+            
+            <button class="zero" onclick="appendNumber('0')">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button class="function" onclick="appendFunction('(')">(</button>
+            <button class="function" onclick="appendFunction(')')">)</button>
+        </div>
     </div>
 
     <script>
-        // Get references to HTML elements
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const loginForm = document.getElementById('login-form');
-        const loginMessage = document.getElementById('login-message');
-        const loginSection = document.getElementById('login-section');
-        const gallerySection = document.getElementById('gallery-section');
-        const videoSection = document.getElementById('video-section');
-        const photoContainer = document.getElementById('photo-container');
-        const paginationControls = document.getElementById('pagination-controls');
-        const backgroundMusic = document.getElementById('background-music');
-        const videoPlayer = document.getElementById('video-player');
-        const viewVideoButton = document.getElementById('view-video-button');
+        let currentExpression = '';
+        let currentResult = '0';
+        let isDarkMode = true;
 
-        // Define correct login credentials
-        const correctUsername = "kayla harinda shavika"; // All lowercase for flexible checking
-        const correctPassword = "14-10-2009";
+        const expressionElement = document.getElementById('expression');
+        const resultElement = document.getElementById('result');
+        const themeToggle = document.getElementById('themeToggle');
 
-        // *** PENTING: ISI ARRAY INI DENGAN NAMA FILE FOTO ANDA SECARA LENGKAP DAN TEPAT! ***
-        // Pastikan ada 30 entri. Contoh: "photo1.jpg", "photo2.jpg", ..., "photo8.jpg".
-        const photoFileNames = [
-            "photo1.jpg","photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg","photo6.jpg","photo7.jpg","photo8.jpg","photo9.jpg","IMG-20251015-WA0189.jpg"
-            // Contoh jika nama file Anda benar-benar berbeda dan tidak berurutan:
-            // "my_first_pic.jpg", "a_second_pic.jpeg", "holiday_03.png", "random_photo_4.webp", ... (30 entri)
-        ];
+        function updateDisplay() {
+            expressionElement.textContent = currentExpression;
+            resultElement.textContent = currentResult;
+        }
 
-        // Photo gallery settings
-        const totalPhotos = photoFileNames.length;
-        const photosPerPage = 2;
-        const totalPages = Math.ceil(totalPhotos / photosPerPage);
-        let currentPage = 1;
+        function appendNumber(number) {
+            if (currentResult === '0' && number !== '0') {
+                currentResult = number;
+            } else if (currentResult !== '0') {
+                currentResult += number;
+            }
+            updateDisplay();
+        }
 
-        // --- Login Logic ---
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        function appendDecimal() {
+            if (!currentResult.includes('.')) {
+                currentResult += currentResult === '' ? '0.' : '.';
+                updateDisplay();
+            }
+        }
 
-            const enteredUsername = usernameInput.value.toLowerCase().trim();
-            const enteredPassword = passwordInput.value.trim();
+        function appendOperator(operator) {
+            if (currentResult !== '') {
+                currentExpression += currentResult + ' ' + operator + ' ';
+                currentResult = '';
+                updateDisplay();
+            } else if (currentExpression !== '') {
+                currentExpression = currentExpression.slice(0, -3) + ' ' + operator + ' ';
+                updateDisplay();
+            }
+        }
 
-            if (enteredUsername === correctUsername && enteredPassword === correctPassword) {
-                loginMessage.textContent = '';
-                loginSection.classList.remove('show');
-                loginSection.style.opacity = '0';
-                loginSection.style.transform = 'translateY(20px)';
-
-                setTimeout(() => {
-                    loginSection.style.display = 'none';
-                    gallerySection.style.display = 'block';
-                    setTimeout(() => {
-                        gallerySection.classList.add('show');
-                    }, 50);
-                }, 600);
-
-                backgroundMusic.volume = 0.5;
-                backgroundMusic.play().catch(e => console.error("Music autoplay blocked:", e));
-
-                renderPhotos(currentPage);
-                renderPagination();
-                toggleVideoButtonVisibility();
+        function appendFunction(func) {
+            if (func === 'π') {
+                currentResult = Math.PI.toString();
+            } else if (func === '^') {
+                appendOperator('^');
+            } else if (func === 'sqrt(') {
+                currentExpression += 'Math.sqrt(';
+                currentResult = '';
             } else {
-                loginMessage.textContent = 'Login ditolak. Nama pengguna atau kata sandi salah.';
+                currentExpression += func;
             }
-        });
-
-        // --- Photo Gallery Logic ---
-        function renderPhotos(page) {
-            photoContainer.innerHTML = '';
-            const startIndex = (page - 1) * photosPerPage;
-            const endIndex = Math.min(startIndex + photosPerPage, totalPhotos);
-
-            for (let i = startIndex; i < endIndex; i++) {
-                const photoItem = document.createElement('div');
-                photoItem.classList.add('photo-item');
-
-                const clickText = document.createElement('span');
-                clickText.classList.add('click-text');
-                clickText.textContent = 'Klik Foto';
-                photoItem.appendChild(clickText);
-
-                const img = document.createElement('img');
-                // Path ini harus cocok dengan nama folder Anda (case-sensitive)
-                img.src = `photoFileNames/${photoFileNames[i]}`;
-                img.alt = `Foto ${i + 1}`;
-                img.loading = 'eager';
-
-                // Tambahkan event listener untuk menampilkan gambar saat diklik
-                photoItem.addEventListener('click', function() {
-                    if (!photoItem.classList.contains('revealed') && !photoItem.classList.contains('error')) {
-                        photoItem.classList.add('revealed');
-                        // Optional: You could make the image visible immediately and then fade in:
-                        // img.style.opacity = 1; // Or just let CSS transition handle it.
-                    }
-                });
-
-                img.onerror = () => {
-                    console.error(`Gagal memuat gambar: ${img.src}. Pastikan nama folder dan nama file (termasuk huruf besar/kecil dan ekstensi) sudah benar.`);
-                    photoItem.classList.add('error');
-                    photoItem.classList.remove('revealed'); // Ensure it doesn't try to show broken image
-                };
-
-                photoItem.appendChild(img);
-                photoContainer.appendChild(photoItem);
-            }
+            updateDisplay();
         }
 
-        function renderPagination() {
-            paginationControls.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const button = document.createElement('button');
-                button.textContent = i;
-                if (i === currentPage) {
-                    button.classList.add('active');
+        function clearAll() {
+            currentExpression = '';
+            currentResult = '0';
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentResult !== '') {
+                currentResult = currentResult.slice(0, -1);
+                if (currentResult === '') currentResult = '0';
+            } else if (currentExpression !== '') {
+                currentExpression = currentExpression.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                let expr = currentExpression + currentResult;
+                expr = expr.replace(/\^/g, '**'); 
+                expr = expr.replace(/π/g, Math.PI.toString());
+                
+                if (expr.includes('Math.sqrt(')) {
+                 
+                    expr = expr.replace(/Math.sqrt\(([^)]+)\)/g, (match, inner) => {
+                        return `Math.sqrt(${eval(inner)})`;
+                    });
                 }
-                button.addEventListener('click', function() {
-                    currentPage = i;
-                    renderPhotos(currentPage);
-                    updatePaginationActiveButton();
-                    toggleVideoButtonVisibility();
-                });
-                paginationControls.appendChild(button);
-            }
-        }
 
-        function updatePaginationActiveButton() {
-            const buttons = paginationControls.querySelectorAll('button');
-            buttons.forEach(button => {
-                if (parseInt(button.textContent) === currentPage) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            });
-        }
-
-        // --- Video Button Logic ---
-        function toggleVideoButtonVisibility() {
-            if (currentPage === totalPages) {
-                viewVideoButton.style.display = 'block';
-            } else {
-                viewVideoButton.style.display = 'none';
-            }
-        }
-
-        viewVideoButton.addEventListener('click', () => {
-            gallerySection.classList.remove('show');
-            gallerySection.style.opacity = '0';
-            gallerySection.style.transform = 'translateY(20px)';
-
-            setTimeout(() => {
-                gallerySection.style.display = 'none';
-                videoSection.style.display = 'block';
+                const result = eval(expr);
+                currentResult = result.toString();
+                currentExpression = '';
+                updateDisplay();
+            } catch (error) {
+                currentResult = 'Error';
+                updateDisplay();
                 setTimeout(() => {
-                    videoSection.classList.add('show');
-                }, 50);
-
-                backgroundMusic.pause();
-                videoPlayer.play().catch(e => console.error("Video autoplay blocked:", e));
-            }, 600);
-        });
-
-
-        // --- Video Logic ---
-        videoPlayer.addEventListener('play', () => {
-            backgroundMusic.pause();
-        });
-
-        videoPlayer.addEventListener('pause', () => {
-            // No action needed if video paused by user.
-        });
-
-        videoPlayer.addEventListener('ended', () => {
-            // No action needed if video ended.
-        });
-
-        // Fullscreen functionality with F4 key
-        document.addEventListener('keydown', function(event) {
-            if (videoSection.style.display === 'block' && event.key === 'F4') {
-                event.preventDefault();
-
-                if (videoPlayer.requestFullscreen) {
-                    videoPlayer.requestFullscreen();
-                } else if (videoPlayer.mozRequestFullScreen) {
-                    videoPlayer.mozRequestFullScreen();
-                } else if (videoPlayer.webkitRequestFullscreen) {
-                    videoPlayer.webkitRequestFullscreen();
-                } else if (videoPlayer.msRequestFullscreen) {
-                    videoPlayer.msRequestFullscreen();
-                }
+                    currentResult = '0';
+                    updateDisplay();
+                }, 1000);
             }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light-mode');
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+        });
+
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            if (/[0-9]/.test(key)) appendNumber(key);
+            else if (key === '.') appendDecimal();
+            else if (['+', '-', '*', '/', '%'].includes(key)) appendOperator(key);
+            else if (key === 'Enter') calculate();
+            else if (key === 'Escape') clearAll();
+            else if (key === 'Backspace') backspace();
+            else if (key === '^') appendFunction('^');
+            else if (key === 'p' && e.ctrlKey) appendFunction('π');
+            else if (key === '(') appendFunction('(');
+            else if (key === ')') appendFunction(')');
         });
     </script>
-
 </body>
-
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                </html>
